@@ -1,0 +1,480 @@
+1)Decision Tree
+
+import pandas
+from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+%matplotlib inline
+df=pandas.read_csv(r"C:\Users\Student\Desktop\dataSet.csv")
+d={'UK':0,'USA':1,'N':2}
+df['Nationality']=df['Nationality'].map(d)
+d={'YES':1,'NO':0}
+df['Go']=df['Go'].map(d)
+features=['Age','Experience','Rank','Nationality']
+X=df[features]
+y=df['Go']
+dtree=DecisionTreeClassifier(criterion='entropy')
+dtree=dtree.fit(X.values,y)
+tree.plot_tree(dtree,feature_names=features)
+print(dtree.predict([[40,10,7,1]]))
+
+2)KNN
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+import random
+data_iris=load_iris()
+label_target=data_iris.target_names
+print()
+print("Sample data from the iris dataset: ")
+print("*"*30)
+for i in range(10):
+ rn=random.randint(0,120)
+ print(data_iris.data[rn],"==>",label_target[data_iris.target[rn]])
+X=data_iris.data
+y=data_iris.target
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_s
+tate=8)
+print("The training dataset length: ",len(X_train))
+print("The testing dataset length: ",len(X_test))
+try:
+ nn=int(input("Enter number of neighbors: "))
+ knn=KNeighborsClassifier(nn)
+ knn.fit(X_train,y_train)
+ test_data=input("Enter test data: ").split(",")
+ for i in range(len(test_data)):
+ test_data[i]=float(test_data[i])
+ print()
+ v=knn.predict([test_data])
+ print("Predicted output is: ", label_target[v])
+except:
+ print("Please provide valid input...")
+
+
+3)Linear Regression
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+np.random.seed(0)
+X=2*np.random.rand(100,1)
+y=4+3*X + np.random.randn(100,1)
+model=LinearRegression()
+model.fit(X,y)
+X_new=np.array([[0],[2]])
+y_predict=model.predict(X_new)
+plt.plot(X_new,y_predict,"r-",linewidth=2,label="Predictions")
+plt.plot(X,y,"b.",label="Data points")
+plt.xlabel("$x_1$",fontsize=18)
+plt.ylabel("$y$",rotation=0,fontsize=18)
+plt.legend()
+plt.axis([0,2,0,15])
+plt.show()
+print("Intercept: ",model.intercept_)
+print("Coefficient: ", model.coef_) 
+
+
+4)Logistic Regression
+
+import warnings
+warnings.filterwarnings("ignore")
+import numpy
+from sklearn import linear_model
+%matplotlib inline
+X=numpy.array([3.78,2.44,2.09,0.14,1.72,1.65,4.92,4.37,4.96,4.52,3.69,5
+.88]).reshape(-1,1)
+y=numpy.array([0,0,0,0,0,0,1,1,1,1,1,1])
+logr=linear_model.LogisticRegression()
+logr.fit(X,y)
+predicted=logr.predict(numpy.array([3.46]).reshape(-1,1))
+print(predicted)
+
+
+5) Naïve Bayes
+
+import numpy as np
+import pandas as pd
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+
+# Define the data
+data = {
+    'outlook': ['sunny', 'sunny', 'overcast', 'rainy', 'rainy', 'rainy', 'overcast', 'sunny', 'sunny', 'rainy', 'sunny', 'overcast', 'overcast', 'rainy'],
+    'temp': ['hot', 'hot', 'hot', 'mild', 'cool', 'cool', 'cool', 'mild', 'cool', 'mild', 'mild', 'mild', 'hot', 'mild'],
+    'humidity': ['high', 'high', 'high', 'high', 'normal', 'normal', 'normal', 'high', 'normal', 'normal', 'normal', 'high', 'normal', 'high'],
+    'windy': ['false', 'true', 'false', 'false', 'false', 'true', 'true', 'false', 'false', 'false', 'true', 'true', 'false', 'true'],
+    'play': ['no', 'no', 'yes', 'yes', 'yes', 'no', 'yes', 'no', 'yes', 'yes', 'yes', 'yes', 'yes', 'no']
+}
+df = pd.DataFrame(data)
+
+# Convert categorical data to numerical codes
+df_c = df.astype('category')
+df_c["outlook"] = df_c["outlook"].cat.codes
+df_c["temp"] = df_c["temp"].cat.codes
+df_c["humidity"] = df_c["humidity"].cat.codes
+df_c["windy"] = df_c["windy"].cat.codes
+df_c["play"] = df_c["play"].cat.codes
+
+# Extract features and target variable
+X = df_c.iloc[:, :4].values
+Y = df_c.iloc[:, 4].values
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=45)
+print(X_train.shape, y_train.shape)
+
+# Create and train the Gaussian Naive Bayes model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Predict the class label for a new data point
+predicted = model.predict([[0, 2, 2, 1]])
+print("Predicted value: ", predicted)
+
+
+
+6)Bagging
+
+from sklearn.datasets import make_classification
+from sklearn.ensemble import BaggingClassifier
+
+# Generate a random dataset
+X, y = make_classification(n_samples=10, n_features=5, n_informative=2, n_redundant=2, random_state=1)
+
+# Create an instance of BaggingClassifier
+model = BaggingClassifier()
+
+# Train the BaggingClassifier
+model.fit(X, y)
+
+# New data point for prediction
+row = [[1.65980218, -1.04052679, 0.89368622, 1.03584131, -1.55118469]]
+
+# Predict the class for the new data point
+yhat = model.predict(row)
+
+# Print the predicted class
+print('Predicted class: %d' % yhat)
+
+
+
+
+7)Boosting
+
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.datasets import make_classification
+
+# Generate a random dataset
+X, y = make_classification(n_samples=10, n_features=5, n_informative=2, n_redundant=2, random_state=1)
+
+# Create and configure the GradientBoostingClassifier
+cl = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1)
+
+# Train the GradientBoostingClassifier
+cl.fit(X, y)
+
+# Print the shape of the dataset and the dataset itself
+print(X.shape, y.shape)
+print(X)
+
+# New data point for prediction
+row = [[0.191, 1.054, -0.729, -1.146, 1.446]]
+
+# Predict the class for the new data point
+yhat = cl.predict(row)
+
+# Print the predicted class
+print('Predicted class: %d' % yhat[0])
+
+
+8)Random Forest
+
+
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+
+# Load the dataset
+bank_data = pd.read_csv(r"bank.csv")
+
+# Select relevant columns
+bank_data = bank_data.loc[:, ['age', 'default', 'cons.price.idx', 'cons.conf.idx', 'y']]
+print(bank_data.head(5))
+
+# Map categorical variables to numerical values
+bank_data['default'] = bank_data['default'].map({'no': 0, 'yes': 1, 'unknown': 0})
+bank_data['y'] = bank_data['y'].map({'no': 0, 'yes': 1})
+
+# Define features and target variable
+X = bank_data.drop('y', axis=1)
+y = bank_data['y']
+
+# Split the dataset into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and train the RandomForestClassifier
+rf = RandomForestClassifier()
+rf.fit(X_train, y_train)
+
+# Define a new data point for prediction
+row = [[1, 57, 0, 93.994]]
+
+# Predict the class for the new data point
+y_pred = rf.predict(row)
+print('Prediction: ', y_pred)
+
+
+
+9)Fuzzy
+
+import numpy as np
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
+
+# Set a random seed for reproducibility
+np.random.seed(0)
+
+# Generate random data for clustering
+data = np.random.rand(100, 2)
+
+# Define the number of clusters
+n_clusters = 3
+
+# Perform fuzzy c-means clustering
+cntr, u, u0, d, j, m, p = fuzz.cluster.cmeans(
+    data.T,            # Data to cluster (transposed to shape (2, 100))
+    n_clusters,       # Number of clusters
+    2,                # Fuzziness parameter (m > 1)
+    error=0.005,      # Stopping criterion (minimum improvement)
+    maxiter=1000,     # Maximum number of iterations
+    init=None         # Initial cluster centers (None means random initialization)
+)
+
+# Determine cluster membership for each data point
+cluster_membership = np.argmax(u, axis=0)
+
+# Print cluster centers
+print('Cluster centers: ', cntr)
+
+# Print cluster membership for each data point
+print('Cluster membership: ', cluster_membership)
+
+
+
+
+10)Kmeans clustering without dataset
+
+
+
+from sklearn.cluster import KMeans
+import numpy as np
+import warnings
+
+# Ignore warnings
+warnings.filterwarnings('ignore')
+
+# Define the data
+X = np.array([
+    [1.7, 1.5],
+    [0.1, 0.7],
+    [0.35, 1.24],
+    [0.94, 1.56],
+    [1.26, 1.106],
+    [1.54, 0.41],
+    [0.45, 1.79],
+    [0.77, 0.18]
+])
+
+# Note: `y` is defined but not used in this clustering example
+y = np.array([0, 1, 1, 0, 1, 0, 1, 1])
+
+# Create and fit the k-means model
+kmeans = KMeans(n_clusters=2, random_state=0).fit(X)
+
+# Predict the cluster for a new data point
+output = kmeans.predict([[1.71, 1.58]])
+
+# Print the prediction
+print(output)
+
+
+
+11)Kmeans clustering with dataset
+
+
+import pandas as pd
+from sklearn.cluster import KMeans
+import numpy as np
+import warnings
+
+# Ignore warnings
+warnings.filterwarnings('ignore')
+
+# Read data from CSV file
+df = pd.read_csv("Height-Weight.csv")
+
+# Select features for clustering
+X = df[["Height", "Weight"]]
+
+# Create and fit the k-means model
+kmeans = KMeans(n_clusters=2, random_state=0).fit(X)
+
+# Predict the cluster for a new data point
+output = kmeans.predict([[171, 56]])
+
+# Print the prediction
+print(output)
+
+
+12)confusion matrix
+
+import pandas as pd
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
+import matplotlib.pyplot as plt
+
+# Load the Breast Cancer dataset
+bc = datasets.load_breast_cancer()
+X = bc.data
+y = bc.target
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
+
+# Standardize the features
+sc = StandardScaler()
+sc.fit(X_train)
+X_train_std = sc.transform(X_train)
+X_test_std = sc.transform(X_test)
+
+# Train the SVM model with a linear kernel
+svc = SVC(kernel='linear', random_state=1)
+svc.fit(X_train_std, y_train)
+
+# Make predictions on the test set
+y_pred = svc.predict(X_test_std)
+
+# Compute the confusion matrix
+conf_matrix = confusion_matrix(y_true=y_test, y_pred=y_pred)
+
+# Plot the confusion matrix
+fig, ax = plt.subplots(figsize=(5, 5))
+ax.matshow(conf_matrix, cmap=plt.cm.Oranges, alpha=0.3)
+for i in range(conf_matrix.shape[0]):
+    for j in range(conf_matrix.shape[1]):
+        ax.text(x=j, y=i, s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
+plt.xlabel('Predictions', fontsize=18)
+plt.ylabel('Actuals', fontsize=18)
+plt.title('Confusion matrix', fontsize=18)
+plt.show()
+
+# Print evaluation metrics
+print('Precision: %0.3f' % precision_score(y_test, y_pred))
+print('Recall: %0.3f' % recall_score(y_test, y_pred))
+print('Accuracy: %0.3f' % accuracy_score(y_test, y_pred))
+print('F1 Score: %0.3f' % f1_score(y_test, y_pred))
+
+
+
+13)Agglomerative Clustering
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Define the data
+x = [4, 5, 10, 4, 3, 11, 14, 6, 10, 12]
+y = [21, 19, 24, 17, 16, 25, 24, 22, 21, 21]
+data = list(zip(x, y))
+
+# Perform Agglomerative Clustering
+hierarchical_cluster = AgglomerativeClustering(n_clusters=2, metric='euclidean', linkage='ward')
+labels = hierarchical_cluster.fit_predict(data)
+
+# Plot the clusters
+plt.scatter(x, y, c=labels)
+plt.title("Agglomerative Clustering")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
+
+# Compute linkage matrix and plot dendrogram
+linkage_data = linkage(data, method='ward', metric='euclidean')
+dendrogram(linkage_data)
+plt.title("Dendrogram")
+plt.xlabel("Data Points")
+plt.ylabel("Distance")
+plt.show()
+
+# Print cluster labels
+print(labels)
+
+
+
+14)Text Classification
+
+
+import numpy as np
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.pipeline import make_pipeline
+from sklearn import metrics
+import nltk
+from nltk.corpus import stopwords
+import string
+
+# Download NLTK stopwords
+nltk.download('stopwords')
+
+# Fetch the 20 newsgroups dataset
+data = fetch_20newsgroups(subset='all')
+
+# Function to preprocess text data
+def preprocess(text):
+    # Remove punctuation
+    text = ''.join([char for char in text if char not in string.punctuation])
+    # Tokenize text
+    tokens = text.split()
+    # Remove stopwords
+    tokens = [word for word in tokens if word.lower() not in stopwords.words('english')]
+    return ' '.join(tokens)
+
+# Preprocess the dataset
+data.data = [preprocess(text) for text in data.data]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.2, random_state=42)
+
+# Create a pipeline with TfidfVectorizer and SVM
+model = make_pipeline(TfidfVectorizer(), SVC(kernel='linear'))
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict on the test data
+predicted = model.predict(X_test)
+
+# Calculate the accuracy
+accuracy = metrics.accuracy_score(y_test, predicted)
+print(f'Accuracy: {accuracy}')
+
+# Print the classification report
+print(metrics.classification_report(y_test, predicted, target_names=data.target_names))
+
+
+
+
+
+
+
